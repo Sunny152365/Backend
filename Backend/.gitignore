@@ -1,0 +1,53 @@
+# Python Bytecode와 캐시
+*.pyc
+__pycache__/
+
+# 환경 설정과 민감한 파일
+.env
+*.env
+
+# 데이터베이스 파일
+*.sqlite3
+db.sqlite3
+
+# 로그 파일
+*.log
+
+# 가상환경
+venv/
+env/
+.venv/
+
+# IDE 설정 파일들
+.idea/
+.vscode/
+
+# macOS 잡파일
+.DS_Store
+
+# Django 관련
+*.log
+*.pot
+*.py[cod]
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+staticfiles/
+
+# Spring 관련
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.ipr
+*.iws
+target/
+out/
+
+# 빌드 파일과 임시 파일
+*.tmp
+*.bak
+*.swp
+
