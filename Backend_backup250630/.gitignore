@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# Django
+*.sqlite3
+db.sqlite3
+*.pyc
+.env
+.env.*
+*.pot
+*.py[cod]
+media/
+staticfiles/
+static/
+local_settings.py
+
+# Java / Spring / Spring Boot
+*.class
+*.jar
+*.war
+*.ear
+target/
+build/
+.gradle/
+.mvn/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE 설정 파일
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 기타
+*.log
+*.bak
+*.tmp
+*.swp
+
+# venv
+venv/
+ENV/
+env/
+
