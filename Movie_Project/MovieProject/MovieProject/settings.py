@@ -37,7 +37,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
+    # 우리가 만든 앱
+    'search',  # <- 이건 꼭 추가해야 함
+
+    # 필수는 아님 (아래는 특정 기능을 원할 때만 추가)
+    # 'rest_framework',     # Django REST Framework를 사용할 경우 필요
+    # 'api',                # API용 별도 앱을 만들었다면 추가
 ]
+# 정리:
+# - 우리가 웹사이트 템플릿을 통해 영화 검색만 한다면 'rest_framework'와 'api'는 필요하지 않음
+# - 만약 나중에 React, iOS, Flutter 등에서 요청받기 위한 API를 만들 경우엔 'rest_framework' 추가 필요
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -51,16 +61,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "MovieProject.urls"
 
+# 템플릿 경로 설정 (필요 시 명시)
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
             ],
         },
     },

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>영화 검색</title>
+</head>
+<body>
+    <h1>영화 검색</h1>
+
+    <!-- 검색 폼: GET 방식으로 현재 페이지에 query 전송 -->
+    <form method="get">
+        <input type="text" name="query" placeholder="영화 제목을 입력하세요" required>
+        <button type="submit">검색</button>
+    </form>
+
+    <!-- 검색 결과가 있을 때만 출력 -->
+    {% if movies %}
+        <ul>
+        {% for movie in movies %}
+            <li>
+                <!-- 영화 제목과 연도 표시 -->
+                <strong>{{ movie.Title }}</strong> ({{ movie.Year }})<br>
+
+                <!-- 포스터 이미지가 있으면 출력 -->
+                {% if movie.Poster != 'N/A' %}
+                    <img src="{{ movie.Poster }}" alt="{{ movie.Title }}" width="100">
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <!-- 검색어가 없거나 결과가 없으면 표시 -->
+        <p>검색 결과가 없습니다.</p>
+    {% endif %}
+</body>
+</html>
