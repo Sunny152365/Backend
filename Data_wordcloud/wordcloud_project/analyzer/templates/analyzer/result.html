@@ -1,0 +1,16 @@
+<!-- analyzer/templates/analyzer/result.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>워드클라우드 결과</title>
+</head>
+<body>
+    <h2>“{{ keyword }}”의 풍경</h2>
+
+    <!-- base64로 인코딩된 이미지 표시 -->
+    <img src="data:image/png;base64,{{ wordcloud_img }}" alt="워드클라우드 이미지" style="max-width:100%;"><br><br>
+
+    <a href="/">다시 만들기</a>
+</body>
+</html>
