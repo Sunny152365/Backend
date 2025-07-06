@@ -1,0 +1,24 @@
+{% extends "analyzer/base.html" %}  {# 공통 레이아웃 상속 #}
+
+{% block title %}검색{% endblock %}
+
+{% block content %}
+  <h1>🔍 워드클라우드 생성기</h1>
+
+  <form method="post" action="{% url 'analyzer:result' %}">
+    {% csrf_token %}
+
+    <input type="text" name="keyword" placeholder="키워드 입력" required>
+
+    <select name="category">
+      <option value="news">뉴스</option>
+      <option value="blog">블로그</option>
+    </select>
+
+    <button type="submit">검색</button>
+  </form>
+
+  {% if not user.is_authenticated %}
+    <p style="color: gray;">비회원은 하루 3번까지 검색할 수 있습니다.</p>
+  {% endif %}
+{% endblock %}

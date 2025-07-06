@@ -1,0 +1,24 @@
+{% extends "analyzer/base.html" %}
+
+{% block title %}검색 기록{% endblock %}
+
+{% block content %}
+  <h1>📚 {{ user.username }}님의 검색 기록</h1>
+
+  {% if histories %}
+    <ul>
+      {% for h in histories %}
+        <li>
+          {{ h.search_time|date:"Y-m-d H:i" }} - <strong>{{ h.keyword }}</strong> ({{ h.category }}) - {{ h.crawl_duration }}초
+          <ul>
+            {% for kw in h.top_keywords.all %}
+              <li>{{ kw.word }} ({{ kw.frequency }}회)</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>아직 검색 기록이 없습니다.</p>
+  {% endif %}
+{% endblock %}

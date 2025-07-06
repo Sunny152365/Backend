@@ -1,0 +1,23 @@
+{% extends "analyzer/base.html" %}
+
+{% block title %}결과{% endblock %}
+
+{% block content %}
+  <h1>📊 '{{ keyword }}' 검색 결과</h1>
+  <p>크롤링 소요 시간: {{ time }}초</p>
+
+  <h2>📰 수집된 제목</h2>
+  <ul>
+    {% for title in titles %}
+      <li>{{ title }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>☁️ 워드클라우드</h2>
+  <img src="{{ image_url }}" alt="워드클라우드 이미지" width="400" />
+
+  <p>
+    📥 <a href="{% url 'download_image' %}?filename={{ image_url|cut:'/media/' }}">서버 저장 이미지 다운로드</a><br>
+    🧠 <a href="{% url 'download_direct' %}?keyword={{ keyword }}">즉시 다운로드 (메모리)</a>
+  </p>
+{% endblock %}

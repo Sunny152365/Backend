@@ -1,5 +1,5 @@
 """
-URL configuration for wordcloud_project project.
+URL configuration for miniproject_wordcloud project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -15,16 +15,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-# wordcloud_project/urls.py (예시)
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("", include("analyzer.urls")),  # analyzer 앱 URL 포함
+    # 관리자 페이지 URL (기본 경로는 /admin/)
+    path('admin/', admin.site.urls),
+
+    # analyzer 앱 URL 포함
+    path('', include('analyzer.urls')),
+
+    # Django 기본 auth URL (로그인, 로그아웃)
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
+# MEDIA 파일 서빙 설정 (개발용)
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

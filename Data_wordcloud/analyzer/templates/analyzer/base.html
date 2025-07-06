@@ -1,0 +1,38 @@
+<!-- analyzer/templates/analyzer/base.html -->
+<!-- html 기본 디자인 양식 -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}WordCloud{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{% url 'analyzer:index' %}">🔍 검색</a> |
+      <a href="{% url 'analyzer:history' %}">📚 기록</a> |
+      {% if user.is_authenticated %}
+        <span>👤 {{ user.username }}</span> |
+        <a href="{% url 'analyzer:logout' %}">로그아웃</a>
+      {% else %}
+        <a href="{% url 'analyzer:login' %}">로그인</a> |
+        <a href="{% url 'analyzer:signup' %}">회원가입</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    <!-- 페이지별 콘텐츠가 이 영역에 들어감 -->
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p style="text-align:center;">© 2025 Sunny's WordCloud App</p>
+  </footer>
+</body>
+</html>
