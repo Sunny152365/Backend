@@ -1,28 +1,28 @@
-# analyzer/views.py
-
 import time
 import io
 import os
 from django.shortcuts import render
-from django.http import FileResponse, Http404, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse, HttpResponseForbidden
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from datetime import date
-from django.http import HttpResponseForbidden
 
 from .crawler import crawl_news, crawl_blog
 from .wordcloud_generator import generate_wordcloud
 from .models import SearchHistory, TopKeyword
 
 
-@login_required
 def index(request):
     """
     검색 키워드 입력받는 메인 페이지
     """
-    return render(request, 'analyzer/index.html')
+    context = {
+        'user_authenticated': request.user.is_authenticated
+    }
+    return render(request, 'analyzer/index.html', context)
 
-# @login_required(login_url='/login/')  # 비로그인 허용하면서 제한 걸기 위해 login_url 지정
+
+
 def result(request):
     """
     검색 결과 처리 뷰 (로그인 유무에 따라 기능 분기)
@@ -35,8 +35,15 @@ def result(request):
         if not request.user.is_authenticated:
             today_key = f'search_count_{date.today()}'
             count = request.session.get(today_key, 0)
+            remaining = 3 - count
+
             if count >= 3:
-                return HttpResponseForbidden("❌ 비회원은 하루 3회까지만 검색할 수 있습니다. 로그인해주세요.")
+                return render(request, 'analyzer/limit_exceeded.html', {
+                    'message': "❌ 비회원은 하루 3회까지만 검색할 수 있습니다.",
+                    'remaining': 0,
+                    'count': count
+                })
+            
             request.session[today_key] = count + 1
 
         start = time.time()
@@ -55,6 +62,10 @@ def result(request):
         filename = f"wordcloud_{keyword}.png"
         file_path = os.path.join(settings.MEDIA_ROOT, filename)
 
+        # media 폴더가 없으면 생성
+        if not os.path.exists(settings.MEDIA_ROOT):
+            os.makedirs(settings.MEDIA_ROOT)
+
         wc_image.save(file_path)
 
         # ✅ 로그인 사용자일 경우에만 DB 기록
@@ -68,21 +79,30 @@ def result(request):
 
             for word, freq in top_keywords:
                 TopKeyword.objects.create(
-                    search=search_history,
+                    search_history=search_history,
                     word=word,
                     frequency=freq
                 )
 
         # ✅ 템플릿으로 결과 전달
+        if not titles:
+            return render(request, 'analyzer/result.html', {
+                'keyword': keyword,
+                'titles': [],
+                'time': 0,
+                'image_url': None,
+                'top_keywords': [],
+                'error': "❗ 검색 결과가 없습니다. 키워드를 다시 시도해보세요."
+            })
+
         return render(request, 'analyzer/result.html', {
             'keyword': keyword,
             'titles': titles,
             'time': elapsed_time,
             'image_url': settings.MEDIA_URL + filename,
-            'top_keywords': top_keywords
+            'top_keywords': top_keywords,
+            'error': None,
         })
-
-
 
 @login_required
 def download_image(request):
@@ -100,6 +120,7 @@ def download_image(request):
         raise Http404("파일이 존재하지 않습니다.")
 
     return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=filename)
+
 
 @login_required
 def download_direct(request):
@@ -133,14 +154,14 @@ def download_direct(request):
 
     return response
 
+
 @login_required
 def history(request):
     """
     로그인한 사용자의 검색 기록 및 상위 키워드 조회
     """
-    # 사용자의 검색 기록 최신순 정렬
     histories = SearchHistory.objects.filter(user=request.user).order_by('-search_time')
-    
+
     return render(request, 'analyzer/history.html', {
         'histories': histories
     })

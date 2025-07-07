@@ -42,12 +42,12 @@ def crawl_news(keyword):
         # 뉴스 타이틀 로딩까지 최대 10초 대기
         WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, 'a.news_tit')  # 뉴스 제목 요소
+                (By.CSS_SELECTOR, "span.sds-comps-text-type-headline1")  # 뉴스 제목 요소
             )
         )
 
         # 뉴스 제목 요소 모두 수집
-        titles = driver.find_elements(By.CSS_SELECTOR, 'a.news_tit')
+        titles = driver.find_elements(By.CSS_SELECTOR, "span.sds-comps-text-type-headline1")
         print(f"[뉴스 제목 개수] {len(titles)}개 찾음")
 
         # 최대 10개까지 제목 텍스트 반환
@@ -81,14 +81,14 @@ def crawl_blog(keyword):
             )
             blog_tab.click()
             print("✅ 블로그 탭 클릭 완료")
-            time.sleep(2)  # 탭 전환 후 로딩 대기
+            time.sleep(5)  # 탭 전환 후 로딩 대기
         except Exception:
             print("⚠️ 블로그 탭이 없거나 클릭 불가 — 무시하고 진행")
 
         # 블로그 제목 요소가 로딩될 때까지 최대 15초 대기
         WebDriverWait(driver, 15).until(
             EC.presence_of_all_elements_located(
-                (By.CSS_SELECTOR, 'a.api_txt_lines.total_tit')  # 블로그 제목
+                (By.CSS_SELECTOR, 'a.title_link')  # 블로그 제목
             )
         )
 

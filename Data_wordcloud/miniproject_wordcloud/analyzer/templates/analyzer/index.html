@@ -1,24 +1,36 @@
-{% extends "analyzer/base.html" %}  {# 공통 레이아웃 상속 #}
+{% extends "analyzer/base.html" %}
 
 {% block title %}검색{% endblock %}
 
 {% block content %}
   <h1>🔍 워드클라우드 생성기</h1>
 
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+
   <form method="post" action="{% url 'analyzer:result' %}">
     {% csrf_token %}
 
     <input type="text" name="keyword" placeholder="키워드 입력" required>
-
     <select name="category">
       <option value="news">뉴스</option>
       <option value="blog">블로그</option>
     </select>
-
     <button type="submit">검색</button>
   </form>
 
-  {% if not user.is_authenticated %}
+  {% if user.is_authenticated %}
+    <p style="margin-top: 1rem;">
+      👋 안녕하세요, {{ user.username }}님 |
+      <a href="{% url 'analyzer:logout' %}">로그아웃</a> |
+      <a href="{% url 'analyzer:history' %}">검색 기록</a>
+    </p>
+  {% else %}
     <p style="color: gray;">비회원은 하루 3번까지 검색할 수 있습니다.</p>
+    <p>
+      <a href="{% url 'analyzer:login' %}">로그인</a> |
+      <a href="{% url 'analyzer:signup' %}">회원가입</a>
+    </p>
   {% endif %}
 {% endblock %}

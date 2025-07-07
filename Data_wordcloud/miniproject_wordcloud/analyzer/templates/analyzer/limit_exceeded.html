@@ -1,0 +1,15 @@
+{% extends "analyzer/base.html" %}
+
+{% block title %}제한 초과{% endblock %}
+
+{% block content %}
+  <h2 style="color: red;">{{ message }}</h2>
+  <p>남은 검색 횟수: {{ remaining }}회</p>
+  <p>로그인하시면 제한 없이 사용할 수 있습니다.</p>
+  <a href="{% url 'analyzer:index' %}">
+    <button style="margin-top: 20px;">🔙 메인 페이지로 돌아가기</button>
+  </a>
+  <a href="{% url 'analyzer:login' %}">
+    <button style="margin-top: 10px;">🔐 로그인하기</button>
+  </a>
+{% endblock %}

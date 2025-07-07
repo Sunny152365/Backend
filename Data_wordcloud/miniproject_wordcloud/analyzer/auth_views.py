@@ -94,5 +94,8 @@ def login_view(request):
 
 # 로그아웃 뷰 함수
 def logout_view(request):
+    # 로그아웃 처리 코드
     logout(request)  # 세션 삭제
-    return redirect('index')
+
+    # 네임스페이스를 포함해서 리다이렉트
+    return redirect('analyzer:index')

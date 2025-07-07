@@ -14,10 +14,14 @@
   </ul>
 
   <h2>☁️ 워드클라우드</h2>
+  <p>{{ image_url }}</p>
   <img src="{{ image_url }}" alt="워드클라우드 이미지" width="400" />
 
   <p>
-    📥 <a href="{% url 'download_image' %}?filename={{ image_url|cut:'/media/' }}">서버 저장 이미지 다운로드</a><br>
-    🧠 <a href="{% url 'download_direct' %}?keyword={{ keyword }}">즉시 다운로드 (메모리)</a>
+    📥 <a href="{% url 'analyzer:download_image' %}?filename={{ image_url|cut:'/media/' }}">서버 저장 이미지 다운로드</a><br>
+    🧠 <a href="{% url 'analyzer:download_direct' %}?keyword={{ keyword }}">즉시 다운로드 (메모리)</a>
+    <!-- 검색 결과 페이지 하단에 버튼 추가 -->
+    <p><a href="{% url 'analyzer:index' %}">🔍 다시 검색하기</a></p>
+
   </p>
 {% endblock %}

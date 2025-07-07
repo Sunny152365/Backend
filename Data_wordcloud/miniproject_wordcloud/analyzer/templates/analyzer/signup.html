@@ -1,0 +1,31 @@
+{% extends "analyzer/base.html" %}
+
+{% block title %}회원가입{% endblock %}
+
+{% block content %}
+  <h1>📝 회원가입</h1>
+  <form method="post">
+    {% csrf_token %}
+
+    <p><strong>아이디</strong> (4~20자의 영문자+숫자만 허용)</p>
+    {{ form.username }}
+    {% for error in form.username.errors %}
+      <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <p><strong>비밀번호</strong> (8자 이상, 대문자/소문자/숫자/특수문자 포함 필수)</p>
+    {{ form.password1 }}
+    {% for error in form.password1.errors %}
+      <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <p><strong>비밀번호 확인</strong></p>
+    {{ form.password2 }}
+    {% for error in form.password2.errors %}
+      <div style="color:red;">{{ error }}</div>
+    {% endfor %}
+
+    <br>
+    <button type="submit">가입하기</button>
+  </form>
+{% endblock %}
