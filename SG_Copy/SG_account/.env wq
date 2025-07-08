@@ -1,0 +1,8 @@
+NAVER_CLIENT_ID=_3lM5JlNiGaw3TTgWDa3
+NAVER_CLIENT_SECRET=u4zbVlZiD7
+NAVER_REDIRECT_URI=http://92b9-222-98-221-76.ngrok-free.app/api/naver/callback/
+
+KAKAO_REST_API_KEY=13c6851520e66ea1b11a0bef1f74bcfd
+KAKAO_CLIENT_SECRET=kakaotalk client secret
+KAKAO_REDIRECT_URI=http://92b9-222-98-221-76.ngrok-free.app/api/kakao/callback/
+

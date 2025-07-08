@@ -1,0 +1,8 @@
+NAVER_CLIENT_ID=your_naver_client_id_here
+NAVER_CLIENT_SECRET=your_naver_client_secret_here
+NAVER_REDIRECT_URI=https://9acb-222-98-221-76.ngrok-free.app/api/naver/callback/
+
+KAKAO_REST_API_KEY=your_kakao_rest_api_key_here
+KAKAO_CLIENT_SECRET=your_kakao_client_secret_here
+KAKAO_REDIRECT_URI=https://192.168.219.120:8000/accounts/kakao/callback/
+
