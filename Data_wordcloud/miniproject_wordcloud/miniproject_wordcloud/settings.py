@@ -1,4 +1,6 @@
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 import os
 
 # manage.py가 위치한 폴더를 기준으로 프로젝트 최상위 경로 지정
@@ -100,3 +102,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # 기본 자동 필드 타입 설정
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# settings.py
+NAVER_CLIENT_ID = os.getenv("NAVER_CLIENT_ID", "")
+NAVER_CLIENT_SECRET = os.getenv("NAVER_CLIENT_SECRET", "")

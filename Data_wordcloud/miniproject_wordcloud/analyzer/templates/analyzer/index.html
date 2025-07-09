@@ -9,15 +9,27 @@
     <p style="color: red;">{{ error }}</p>
   {% endif %}
 
+  <!-- ✅ 하나로 통일된 검색 폼 -->
   <form method="post" action="{% url 'analyzer:result' %}">
     {% csrf_token %}
-
     <input type="text" name="keyword" placeholder="키워드 입력" required>
+    
     <select name="category">
       <option value="news">뉴스</option>
       <option value="blog">블로그</option>
     </select>
-    <button type="submit">검색</button>
+
+    <!-- ✅ 일반 크롤링 버튼 -->
+    <button type="submit" name="source" value="general">
+      일반 크롤링
+    </button>
+
+    <!-- ✅ 네이버 API 버튼 (비로그인 시 비활성화) -->
+    <button type="submit" name="source" value="naver"
+      {% if not user.is_authenticated %}disabled title="로그인 후 이용 가능"{% endif %}
+      style="background-color: #03C75A; color: white; border: none; padding: 0.5rem 1rem; margin-left: 1rem;">
+      네이버 API 크롤링
+    </button>
   </form>
 
   {% if user.is_authenticated %}

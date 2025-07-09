@@ -87,7 +87,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)  # 로그인 처리
-            return redirect('index')
+            return redirect('analyzer:index')
     else:
         form = AuthenticationForm()
     return render(request, 'analyzer/login.html', {'form': form})

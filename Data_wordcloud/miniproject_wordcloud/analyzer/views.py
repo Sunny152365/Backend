@@ -1,7 +1,7 @@
 import time
 import io
 import os
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import FileResponse, Http404, HttpResponse, HttpResponseForbidden
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -10,6 +10,9 @@ from datetime import date
 from .crawler import crawl_news, crawl_blog
 from .wordcloud_generator import generate_wordcloud
 from .models import SearchHistory, TopKeyword
+
+# 🚧 네이버 API 함수는 따로 구현해야 함 (예시로 import 가정)
+from .naver_api import naver_news_search, naver_blog_search  # <- 너가 만들어야 할 함수들
 
 
 def index(request):
@@ -23,86 +26,111 @@ def index(request):
 
 
 
-def result(request):
+def unified_crawl(request):
     """
-    검색 결과 처리 뷰 (로그인 유무에 따라 기능 분기)
+    검색 결과 처리 뷰 (일반 크롤링 + 네이버 API 통합)
+    - 로그인 여부 및 소스에 따라 기능 분기
+    - 비회원은 일반 크롤링만 가능하며 하루 3회 제한
+    - 요청된 카테고리에 따라 뉴스 또는 블로그 크롤링 실행
+    - 워드클라우드 생성 및 DB 저장
+    - 결과 템플릿 렌더링
     """
-    if request.method == 'POST':
-        keyword = request.POST.get('keyword')
-        category = request.POST.get('category')
+    if request.method != 'POST':
+        return redirect('analyzer:index')
 
-        # ✅ 비회원 3회 제한 처리 (세션 기반)
-        if not request.user.is_authenticated:
-            today_key = f'search_count_{date.today()}'
-            count = request.session.get(today_key, 0)
-            remaining = 3 - count
+    keyword = request.POST.get('keyword')                     # 입력된 키워드
+    category = request.POST.get('category', 'news')           # 뉴스 또는 블로그
+    source = request.POST.get('source', 'general')            # 일반 또는 네이버 API
 
-            if count >= 3:
-                return render(request, 'analyzer/limit_exceeded.html', {
-                    'message': "❌ 비회원은 하루 3회까지만 검색할 수 있습니다.",
-                    'remaining': 0,
-                    'count': count
-                })
-            
-            request.session[today_key] = count + 1
+    if not keyword:
+        return render(request, 'analyzer/index.html', {
+            'error': '키워드를 입력하세요.'
+        })
 
-        start = time.time()
+    # ✅ 네이버 API는 로그인 사용자만 이용 가능
+    if source == 'naver' and not request.user.is_authenticated:
+        return HttpResponseForbidden("네이버 API 크롤링은 로그인 사용자만 사용할 수 있습니다.")
 
-        # ✅ 카테고리에 따른 크롤링 실행
-        if category == 'news':
-            titles = crawl_news(keyword)
-        else:
-            titles = crawl_blog(keyword)
+    # ✅ 비회원일 경우 일반 크롤링 하루 3회 제한 (세션 기반)
+    remaining = None
+    if source == 'general' and not request.user.is_authenticated:
+        today_key = f'search_count_{date.today()}'
+        count = request.session.get(today_key, 0)
+        remaining = 3 - count
 
-        elapsed_time = round(time.time() - start, 2)
-
-        # ✅ 워드클라우드 생성
-        wc_image, top_keywords = generate_wordcloud(titles, keyword)
-
-        filename = f"wordcloud_{keyword}.png"
-        file_path = os.path.join(settings.MEDIA_ROOT, filename)
-
-        # media 폴더가 없으면 생성
-        if not os.path.exists(settings.MEDIA_ROOT):
-            os.makedirs(settings.MEDIA_ROOT)
-
-        wc_image.save(file_path)
-
-        # ✅ 로그인 사용자일 경우에만 DB 기록
-        if request.user.is_authenticated:
-            search_history = SearchHistory.objects.create(
-                user=request.user,
-                keyword=keyword,
-                category=category,
-                crawl_duration=elapsed_time
-            )
-
-            for word, freq in top_keywords:
-                TopKeyword.objects.create(
-                    search_history=search_history,
-                    word=word,
-                    frequency=freq
-                )
-
-        # ✅ 템플릿으로 결과 전달
-        if not titles:
-            return render(request, 'analyzer/result.html', {
-                'keyword': keyword,
-                'titles': [],
-                'time': 0,
-                'image_url': None,
-                'top_keywords': [],
-                'error': "❗ 검색 결과가 없습니다. 키워드를 다시 시도해보세요."
+        if count >= 3:
+            return render(request, 'analyzer/limit_exceeded.html', {
+                'message': "❌ 비회원은 하루 3회까지만 검색할 수 있습니다.",
+                'remaining': 0,
+                'count': count
             })
 
+        request.session[today_key] = count + 1
+    elif request.user.is_authenticated:
+        remaining = None  # 로그인 사용자는 제한 없음
+
+    start = time.time()
+
+    # ✅ 카테고리 및 소스에 따른 크롤링 실행
+    if source == 'naver':
+        titles = naver_news_search(keyword) if category == 'news' else naver_blog_search(keyword)
+    else:
+        titles = crawl_news(keyword) if category == 'news' else crawl_blog(keyword)
+
+    elapsed_time = round(time.time() - start, 2)
+
+    # ✅ 검색 결과가 없는 경우 예외 처리
+    if not titles:
         return render(request, 'analyzer/result.html', {
             'keyword': keyword,
-            'titles': titles,
-            'time': elapsed_time,
-            'image_url': settings.MEDIA_URL + filename,
-            'top_keywords': top_keywords,
-            'error': None,
+            'titles': [],
+            'time': 0,
+            'image_url': None,
+            'top_keywords': [],
+            'error': "❗ 검색 결과가 없습니다. 키워드를 다시 시도해보세요.",
+            'remaining': remaining,
         })
+
+    # ✅ 워드클라우드 이미지 및 상위 키워드 생성
+    wc_image, top_keywords = generate_wordcloud(titles, keyword)
+
+    # ✅ 이미지 파일 저장 경로 설정
+    filename = f"{source}_wordcloud_{keyword}.png"
+    file_path = os.path.join(settings.MEDIA_ROOT, filename)
+
+    # ✅ media 폴더 없으면 생성
+    if not os.path.exists(settings.MEDIA_ROOT):
+        os.makedirs(settings.MEDIA_ROOT)
+
+    wc_image.save(file_path)
+
+    # ✅ 로그인 사용자일 경우 검색 기록 DB 저장
+    if request.user.is_authenticated:
+        search_history = SearchHistory.objects.create(
+            user=request.user,
+            keyword=keyword,
+            category=category,
+            crawl_duration=elapsed_time
+        )
+
+        for word, freq in top_keywords:
+            TopKeyword.objects.create(
+                search_history=search_history,
+                word=word,
+                frequency=freq
+            )
+
+    # ✅ 결과 페이지로 렌더링
+    return render(request, 'analyzer/result.html', {
+        'keyword': keyword,
+        'titles': titles,
+        'time': elapsed_time,
+        'image_url': settings.MEDIA_URL + filename,
+        'top_keywords': top_keywords,
+        'error': None,
+        'remaining': remaining,
+    })
+
 
 @login_required
 def download_image(request):
