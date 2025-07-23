@@ -214,3 +214,6 @@ ALLOWED_REDIRECT_SCHEMES = ['http', 'https', 'ftp', 'mailto', 'naverkhs0sahddsys
 
 # settings.py
 NAVER_CALLBACK_SCHEME = 'naverKhS0SAhDdsySi5rd5bRf'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

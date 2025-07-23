@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +26,9 @@ urlpatterns = [
 
     path('', include('SG_account.accounts.urls')),
     path('mypage/', include('SG_mypage.urls')),
+    path('account/', include('SG_account.accounts.urls')),   # 기존 account 앱도 include
 ]
+
+# 미디어 파일 설정 (이미지 업로드용)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
