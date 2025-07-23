@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from django.http import HttpResponseRedirect
+import pymysql
+pymysql.install_as_MySQLdb()
 
 HttpResponseRedirect.allowed_schemes = [
     'http',
@@ -33,7 +35,8 @@ class PrintRequestPathMiddleware:
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-AUTH_USER_MODEL = 'accounts.User'
+# AUTH_USER_MODEL = 'SG_account.accounts.User'
+AUTH_USER_MODEL = 'accounts.User'  # app_label.ModelName 형태
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -61,9 +64,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'accounts',  # 사용자 앱
+    'SG_account.accounts',
     'django_extensions',
+    'SG_mypage',
 ]
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

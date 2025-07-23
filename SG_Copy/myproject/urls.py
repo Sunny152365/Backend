@@ -20,7 +20,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 여기에서 accounts 앱의 URL들을 포함시킴
-    path('api/', include('accounts.urls')),  # <-- 이게 있어야 /api/login/ 으로 연결됨
+    path('api/', include('SG_account.accounts.urls')), # <-- 이게 있어야 /api/login/ 으로 연결됨
 
-    path('', include('accounts.urls')),
+    path('', include('SG_account.accounts.urls')),
+    path('mypage/', include('SG_mypage.urls')),
 ]

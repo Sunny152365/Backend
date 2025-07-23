@@ -1,0 +1,11 @@
+{% extends 'mypage/base.html' %}
+{% block title %}고수 대시보드{% endblock %}
+{% block content %}
+<h2>고수 대시보드</h2>
+<p>{{ user.name }}님, 환영합니다!</p>
+<ul>
+    <li><a href="#">내 견적 관리</a></li>
+    <li><a href="#">요청서 탐색</a></li>
+    <li><a href="#">수익/정산</a></li>
+</ul>
+{% endblock %}
