@@ -21,7 +21,7 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.sender} → Room {self.room.id}: {self.content[:20]}"
-
+    
 # ChatRoom
 # 1:1 또는 단체 채팅방. 참여자는 ManyToMany로 연결됨.
 # Message
