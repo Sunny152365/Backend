@@ -100,3 +100,31 @@ sys.stdin.readline().rstrip()
 
 from itertools import permutations, combinations
 from collections import Counter
+
+# 1,2 오답 3 정답
+print("         ,r'\"7")
+print("         ,r'\"7")
+print('         ,r\'\"7')
+print("r'-_   ,'  ,/")
+print("r'-_   ,'  ,/")
+print('r`-_   ,\'  ,/')
+print(" \\.\ \". L_r'")
+print(" \\. \". L_r'")
+print(' \\. \". L_r\'')
+print("   `~\\/")
+print("   `~\\/")
+print('   `~\\/')
+print("      |")
+print("      |")
+print('      |')
+print("      |")
+print("      |")
+print('      |')
+
+# 정답
+print('         ,r\'\"7')
+print('r`-_   ,\'  ,/')
+print(' \\. \". L_r\'')
+print('   `~\\/')
+print('      |')
+print('      |')
